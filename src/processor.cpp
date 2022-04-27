@@ -65,7 +65,7 @@ void Processor::largest_transactions_10() {
 // count of transactions by state
 void Processor::transactions_by_state() {
     std::string file_name = "transactions_by_state.xml";
-    std::map<std::string, unsigned long long> t;
+    std::unordered_map<std::string, unsigned long long> t;
 
     for(auto p: data->transactions) {
         if(p.second->get_is_fraud())    //skip fraud
@@ -221,28 +221,3 @@ void Processor::percentage_of_fraud_by_year() {
 }
 
 
-// Transaction Types
-void Processor::transaction_types() {
-    std::string file_name = "transaction_types.xml";
-    std::map<std::string, unsigned long long> t;
-
-    for(auto p : data->transactions) {
-        auto iter = t.find(p.second->get_use_chip());
-
-        if(iter != t.end())
-            iter->second++;
-        else
-            t.insert(std::make_pair(p.second->get_use_chip(), 1));
-    }
-
-    std::string xml_string = "<transaction_types>";
-    for(auto p : t) {
-        std::string name = p.first;
-        xml_string += "<type id=\"" + name + "\">";
-        xml_string += "<count>" + std::to_string(p.second) + "</count>";
-        xml_string += "</type>";
-    }
-    xml_string += "</transaction_types>";
-
-    save_to_xml(xml_string, file_name);
-}
