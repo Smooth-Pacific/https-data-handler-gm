@@ -28,6 +28,7 @@ private: // Private Member Functions
 private: // Querries
     void largest_transactions_10();
     void transactions_by_state();
+    void insufficient_balance();
 
 public: // Public Member Functions
     void run_querries();

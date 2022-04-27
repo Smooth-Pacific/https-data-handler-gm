@@ -61,6 +61,7 @@ void Processor::largest_transactions_10() {
     save_to_xml(xml_string, file_name);
 }
 
+
 // count of transactions by state
 void Processor::transactions_by_state() {
     std::string file_name = "transactions_by_state.xml";
@@ -86,6 +87,32 @@ void Processor::transactions_by_state() {
         xml_string += "</state>";
     }
     xml_string += "</transactions>";
+
+    save_to_xml(xml_string, file_name);
+}
+
+
+// insufficient balance error count
+void Processor::insufficient_balance() {
+    std::string file_name = "insufficient_balance.xml";
+    std::map<User*, bool> problem_users;
+
+    for(auto p: data->transactions) {
+        if(p.second->get_errors() != "Insufficient Balance")
+            continue;
+
+        auto iter = problem_users.find(p.second->get_user());
+        if(iter == problem_users.end())
+            problem_users.insert(std::make_pair(p.second->get_user(), true));
+    }
+
+
+    std::string xml_string = "<insufficient_balance>";
+    xml_string += "<total_user_count>" + std::to_string(data->users.size()) + "</total_user_count>";
+    xml_string += "<problem_user_count>" + std::to_string(problem_users.size()) + "</problem_user_count>";
+    std::string percent = std::to_string(100. * problem_users.size() / data->users.size());
+    xml_string += "<percentage_of_users>" + percent.substr(0, percent.find(".") + 2 + 1) + "%</percentage_of_users>";
+    xml_string += "</insufficient_balance>";
 
     save_to_xml(xml_string, file_name);
 }
