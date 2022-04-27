@@ -31,7 +31,8 @@ private: // Querries
     void insufficient_balance();
     void most_transactions_by_zip_5();
     void largest_transactions_by_merchant_5();
-
+    void percentage_of_fraud_by_year();
+    void transaction_types();
 
 
 public: // Public Member Functions

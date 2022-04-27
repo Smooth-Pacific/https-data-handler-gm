@@ -179,3 +179,70 @@ void Processor::largest_transactions_by_merchant_5() {
 
     save_to_xml(xml_string, file_name);
 }
+
+
+// Fraud Percentage
+void Processor::percentage_of_fraud_by_year() {
+    std::string file_name = "percentage_of_fraud_by_year.xml";
+    std::map<int, std::pair<unsigned long, unsigned long>> year_counts;
+    int fraud_value;
+
+    for(auto t: data->transactions) {
+        fraud_value = t.second->get_is_fraud() ? 1 : 0;
+        auto iter = year_counts.find(t.second->get_year());
+
+        if(iter != year_counts.end()) {
+            iter->second.first += 1;
+            iter->second.second += fraud_value;
+        }
+
+        else {
+            year_counts.insert(std::make_pair(t.second->get_year(), std::make_pair(1,fraud_value)));
+        }
+    }
+
+
+    //write result to xml string
+    std::string xml_string = "<fraudulent_transactions>";
+
+    for(auto pair: year_counts) {
+        float percent = 100. * pair.second.second / pair.second.first;
+
+        xml_string += "<year id=" + std::to_string(pair.first) + ">";
+        xml_string += std::to_string(percent) + "%";
+        xml_string += "</year>";
+    }
+    
+    xml_string += "</fraudulent_transactions>";
+
+
+    //save result
+    save_to_xml(xml_string, file_name);
+}
+
+
+// Transaction Types
+void Processor::transaction_types() {
+    std::string file_name = "transaction_types.xml";
+    std::map<std::string, unsigned long long> t;
+
+    for(auto p : data->transactions) {
+        auto iter = t.find(p.second->get_use_chip());
+
+        if(iter != t.end())
+            iter->second++;
+        else
+            t.insert(std::make_pair(p.second->get_use_chip(), 1));
+    }
+
+    std::string xml_string = "<transaction_types>";
+    for(auto p : t) {
+        std::string name = p.first;
+        xml_string += "<type id=\"" + name + "\">";
+        xml_string += "<count>" + std::to_string(p.second) + "</count>";
+        xml_string += "</type>";
+    }
+    xml_string += "</transaction_types>";
+
+    save_to_xml(xml_string, file_name);
+}
