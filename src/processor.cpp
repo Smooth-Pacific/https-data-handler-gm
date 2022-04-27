@@ -155,3 +155,27 @@ void Processor::most_transactions_by_zip_5() {
 
     save_to_xml(xml_string, file_name);
 }
+
+
+// Top 5 transactions by merchant
+void Processor::largest_transactions_by_merchant_5() {
+    std::string file_name = "largest_transactions_by_merchant_5.xml";
+    std::vector<std::pair<unsigned long long, Transaction*>> vec;
+
+    for(auto p: data->transactions)
+        vec.push_back(p);
+
+
+    sort(vec.begin(), vec.end(), cmp);   
+
+
+    std::string xml_string = "<transactions>";
+    for(int i = 0; i < 5; i++) {
+        xml_string += "<transaction id=" + std::to_string(vec.at(i).first) + ">";
+        xml_string += "<merchant>" + std::to_string(vec.at(i).second->get_merchant()->get_id()) + "</merchant>";
+        xml_string += "</transaction>";
+    }
+    xml_string += "</transactions>";
+
+    save_to_xml(xml_string, file_name);
+}

@@ -30,6 +30,8 @@ private: // Querries
     void transactions_by_state();
     void insufficient_balance();
     void most_transactions_by_zip_5();
+    void largest_transactions_by_merchant_5();
+
 
 
 public: // Public Member Functions
