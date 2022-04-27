@@ -8,7 +8,8 @@ REDIS = -lredis++ -lhiredis
 LDFLAGS = -L/usr/local/lib
 
 DIR = src
-TARGET = app generator.o data.o
+TARGET = app
+OBJFILES = main.o processor.o generator.o data.o
 
 all: $(TARGET)
 	rm $(OBJFILES)
