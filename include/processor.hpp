@@ -27,7 +27,7 @@ private: // Private Member Functions
 
 private: // Querries
     void largest_transactions_10();
-
+    void transactions_by_state();
 
 public: // Public Member Functions
     void run_querries();

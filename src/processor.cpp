@@ -60,3 +60,32 @@ void Processor::largest_transactions_10() {
 
     save_to_xml(xml_string, file_name);
 }
+
+// count of transactions by state
+void Processor::transactions_by_state() {
+    std::string file_name = "transactions_by_state.xml";
+    std::map<std::string, unsigned long long> t;
+
+    for(auto p: data->transactions) {
+        if(p.second->get_is_fraud())    //skip fraud
+            continue;
+
+        auto iter = t.find(p.second->get_merchant()->get_state());
+
+        if(iter != t.end())
+            iter->second++;
+        else
+            t.insert(std::make_pair(p.second->get_merchant()->get_state(), 1));
+    }
+
+
+    std::string xml_string = "<transactions>";
+    for(auto p: t) {
+        xml_string += "<state id=" + p.first + ">";
+        xml_string += "<count>" + std::to_string(p.second) + "</count>";
+        xml_string += "</state>";
+    }
+    xml_string += "</transactions>";
+
+    save_to_xml(xml_string, file_name);
+}
