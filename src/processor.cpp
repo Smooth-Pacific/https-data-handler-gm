@@ -116,3 +116,42 @@ void Processor::insufficient_balance() {
 
     save_to_xml(xml_string, file_name);
 }
+
+
+// top 5 zipcodes with most transactions
+void Processor::most_transactions_by_zip_5() {
+    std::string file_name = "most_transactions_by_zip_5.xml";
+    std::map<int, unsigned long long> t;
+
+    for(auto p: data->transactions) {
+        if(p.second->get_merchant()->get_zip_code() == 0)    //skip non-zip_code entries
+            continue;
+
+        auto iter = t.find(p.second->get_merchant()->get_zip_code());
+
+        if(iter != t.end())
+            iter->second++;
+        else
+            t.insert(std::make_pair(p.second->get_merchant()->get_zip_code(), 1));
+    }
+
+
+    std::vector<std::pair<int, unsigned long long>> vec;
+    for(auto p: t)
+        vec.push_back(p);
+
+    sort(vec.begin(), vec.end(), [](auto const& a, auto const& b) -> bool {
+        return a.second > b.second;
+    });
+
+
+    std::string xml_string = "<transactions>";
+    for(int i = 0; i < 5; i++) {
+        xml_string += "<zip_code id=" + std::to_string(vec.at(i).first) + ">";
+        xml_string += "<count>" + std::to_string(vec.at(i).second) + "</count>";
+        xml_string += "</zip_code>";
+    }
+    xml_string += "</transactions>";
+
+    save_to_xml(xml_string, file_name);
+}
