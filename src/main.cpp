@@ -1,6 +1,9 @@
 #include <iostream>
 #include "../include/generator.hpp"
 #include "../include/data.hpp"
+#include "../include/processor.hpp"
+
+
 
 int main() {
     //std::string file_name = "resources/card_transaction.v1.csv";
@@ -14,7 +17,10 @@ int main() {
     g.run(chunk_size, file_name);
     g.save_to_redis();
 
-    
+    std::string destination = "cache";  // target folder for results
+    Processor p(data, destination);
+    p.run_querries();
+
     // Cleanup
     delete(data);
 
