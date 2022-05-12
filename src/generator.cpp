@@ -137,6 +137,16 @@ void Generator::run(int chunk_size, std::string file_name) {
         else
             break;
 
+        if(s_month != "")
+            month = std::stoi(s_month);
+        else
+            break;
+
+        if(s_day != "")
+            day = std::stoi(s_day);
+        else
+            break;            
+
         if(s_zip != "")
             zip = std::stoi(s_zip);
         else
@@ -258,33 +268,26 @@ void Generator::save_to_redis() {
     write_transaction_redis(redis_address);
 }
 
+
 void Generator::write_user_redis(std::string address) {
     auto redis = Redis(address);
 
     for(auto p: data->users) {
         std::string designation = "user-" + std::to_string(p.first);
-        redis.hset(designation, "fname", p.second->get_fname());
-        redis.hset(designation, "lname", p.second->get_lname());
-        redis.hset(designation, "email", p.second->get_email());
+    
+        std::unordered_map<std::string, std::string> map = {
+            {"fname", p.second->get_fname()},
+            {"lname", p.second->get_lname()},
+            {"email", p.second->get_email()}
+        };
+
         for(auto p2: *p.second->get_cards()) {
-            redis.hset(designation, ("cards[" + std::to_string(p2.first) + "]"), p2.second);
+            map.insert(std::make_pair(("cards[" + std::to_string(p2.first) + "]"), p2.second));
         }
+
+        redis.hmset(designation, map.begin(), map.end());
     }
 }
-
-// void Generator::write_merchant_redis(std::string address) {
-//     auto redis = Redis(address);
-
-//     for(auto m: data->merchants) {
-//         std::string designation = "merchant-" + std::to_string(m.first);
-//         redis.hset(designation, "name", m.second->get_name());
-//         redis.hset(designation, "city", m.second->get_city());
-//         redis.hset(designation, "state", m.second->get_state());
-//         redis.hset(designation, "zipcode", std::to_string(m.second->get_zip_code()));
-//         redis.hset(designation, "mcc", std::to_string(m.second->get_mcc()));
-//         redis.hset(designation, "merchant_type", m.second->get_merchant_type());
-//     }
-// }
 
 void Generator::write_merchant_redis(std::string address) {
     auto redis = Redis(address);
@@ -311,48 +314,28 @@ void Generator::write_state_redis(std::string address) {
 
     for(auto s: data->states) {
         std::string designation = "state-" + s.first;
-        redis.hset(designation, "name", s.second->get_name());
-        redis.hset(designation, "capital", s.second->get_capital());
-        redis.hset(designation, "abbr", s.second->get_abbr());
+
+        std::unordered_map<std::string, std::string> map = {
+            {"name",  s.second->get_name()},
+            {"capital", s.second->get_capital()},
+            {"abbr", s.second->get_abbr()}
+        };
 
         i = 0;
         for(auto zip_codes: *s.second->get_zip_codes()) {
-            std::string arr = "zip_codes[" + std::to_string(i) + "]";
-            redis.hset(designation, arr, std::to_string(zip_codes.first));
+            map.insert(std::make_pair("zip_codes[" + std::to_string(i) + "]", std::to_string(zip_codes.first)));
             i++;
         }
 
         i = 0;
         for(auto city: *s.second->get_cities()) {
-            std::string arr = "cards[" + std::to_string(i) + "]";
-            redis.hset(designation, arr, city.first);
+            map.insert(std::make_pair("cards[" + std::to_string(i) + "]", city.first));
             i++;
         }
+
+        redis.hmset(designation, map.begin(), map.end());       
     }
 }
-
-// void Generator::write_transaction_redis(std::string address) {
-//     auto redis = Redis(address);
-//     std::string is_fraud;
-
-//     for(auto t: data->transactions) {
-//         std::string designation = "transaction-" + std::to_string(t.first);
-//         redis.hset(designation, "user", std::to_string(t.second->get_user()->get_id()));
-//         redis.hset(designation, "card", std::to_string(t.second->get_card()));
-//         redis.hset(designation, "year", std::to_string(t.second->get_year()));
-//         redis.hset(designation, "month", std::to_string(t.second->get_month()));
-//         redis.hset(designation, "day", std::to_string(t.second->get_day()));
-//         redis.hset(designation, "time", t.second->get_time());
-//         redis.hset(designation, "amount", std::to_string(t.second->get_amount()));
-//         redis.hset(designation, "use_chip", t.second->get_use_chip());
-//         redis.hset(designation, "merchant", std::to_string(t.second->get_merchant()->get_id()));
-//         redis.hset(designation, "errors", t.second->get_errors());
-//         is_fraud = t.second->get_is_fraud() ? "true" : "false";
-//         redis.hset(designation, "is_fraud", is_fraud);
-//     }
-// }
-
-
 
 
 void Generator::write_transaction_redis(std::string address) {

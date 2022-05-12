@@ -8,7 +8,7 @@
 #include <unordered_map>
 #include <algorithm>
 #include <iostream>
-//#include <execution>
+#include <execution>
 
 #include "data.hpp"
 
@@ -33,7 +33,11 @@ private: // Querries
     void most_transactions_by_zip_5();
     void largest_transactions_by_merchant_5();
     void percentage_of_fraud_by_year();
-    void transaction_types();
+    //void transaction_types();
+    void bottom_online_transaction_months_5();
+    void top_cities_with_online();
+    void all_deposits();
+    void most_transactions_by_city_5();
 
 
 public: // Public Member Functions
