@@ -36,6 +36,7 @@ void Processor::run_querries() {
     top_cities_with_online();
     all_deposits();
     most_transactions_by_city_5();
+    merchant_insufficient_balance_5();
 }
 
 // =========================
@@ -394,6 +395,49 @@ void Processor::most_transactions_by_city_5() {
     }
     
     xml_string += "</largest_transaction_count>";
+
+
+    //save result
+    save_to_xml(xml_string, file_name);
+}
+
+
+
+void Processor::merchant_insufficient_balance_5() {
+    std::string file_name = "top_merchant_insufficient_balance.xml";
+    std::map<std::string, int> merchants;
+    std::vector<std::pair<std::string, int>> results;
+
+    for(auto t: data->transactions) {
+        if(t.second->get_errors() != "Insufficient Balance") continue;
+
+        std::string name = t.second->get_merchant()->get_name();
+        auto iter = merchants.find(name);
+
+        if(iter != merchants.end())
+            iter->second++;
+        else
+            merchants.insert(std::make_pair(name, 1));
+    }
+
+
+    copy(std::execution::par, merchants.begin(), merchants.end(), back_inserter(results));
+    sort(std::execution::par, results.begin(), results.end(),
+        [](std::pair<std::string,int> const& a, std::pair<std::string,int> const& b) -> bool {
+            return a.second > b.second;
+        });
+
+    
+    //write result to xml string
+    std::string xml_string = "<merchants_insufficient_balance>";
+
+    for(int i = 0; i < 5; i++) {
+        xml_string += "<merchant id=\"" + results.at(i).first + "\">";
+        xml_string += "<count>" + std::to_string(results.at(i).second) + "</count>";
+        xml_string += "</merchant>";
+    }
+    
+    xml_string += "</merchants_insufficient_balance>";
 
 
     //save result
