@@ -1,7 +1,7 @@
 CC = clang++
 CXXFLAGS = -std=c++17
 CFLAGS = -pthreads -Wall -g
-INCLUDE = -Iinclude -I/usr/local/include
+INCLUDE = -Iinclude -I/usr/local/include -ltbb
 INCLUDE_DIR = -Iinclude
 #REDIS = /usr/local/lib/libredis++.a /usr/include/hiredis
 REDIS = -lredis++ -lhiredis
