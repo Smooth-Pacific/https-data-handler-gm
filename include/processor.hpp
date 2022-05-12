@@ -38,6 +38,7 @@ private: // Querries
     void top_cities_with_online();
     void all_deposits();
     void most_transactions_by_city_5();
+    void merchant_insufficient_balance_5();
 
 
 public: // Public Member Functions

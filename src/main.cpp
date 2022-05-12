@@ -6,9 +6,9 @@
 
 
 int main() {
-    std::string file_name = "resources/card_transaction.v1.csv";
+    //std::string file_name = "resources/card_transaction.v1.csv";
     //std::string file_name = "resources/test.csv";
-    //std::string file_name = "resources/long_test.csv";
+    std::string file_name = "resources/long_test.csv";
 
     int chunk_size = 10'000;
     Data_Holder* data = new Data_Holder();
